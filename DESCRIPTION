@@ -1,0 +1,23 @@
+Package: GenRank
+Title: Candidate gene prioritization based on convergent evidence
+Version: 0.99.1
+Authors@R: person("Chakravarthi", "Kanduri", email =
+        "chakra.kanduri@gmail.com", role = c("aut", "cre"))
+Author: Chakravarthi Kanduri
+Maintainer: Chakravarthi Kanduri <chakra.kanduri@gmail.com>
+Description: Methods for ranking genes based on convergent evidence
+        obtained from multiple independent evidence layers. This
+        package adapts three methods that are popular for
+        meta-analysis.
+Depends: R (>= 3.3)
+License: Artistic-2.0
+biocViews: GeneExpression, SNP, CopyNumberVariation, Microarray,
+        Sequencing, Software, Genetics
+Suggests: knitr, rmarkdown, testthat
+Imports: matrixStats, reshape2, survcomp
+VignetteBuilder: knitr
+LazyData: true
+RoxygenNote: 5.0.1
+URL: https://github.com/chakri9/GenRank
+BugReports: https://github.com/chakri9/GenRank/issues
+NeedsCompilation: no

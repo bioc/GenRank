@@ -1,0 +1,25 @@
+context("CombP")
+
+test_that("Output of CombP is correct", {
+    input_file_P <- system.file("extdata","CombP_toydata.txt",package="GenRank")
+    CP_ranking <- CombP(input_file_P, method = "fisher", na.remove = TRUE)
+    expect_that(is.data.frame(CP_ranking), is_true())
+    expect_that(ncol(CP_ranking), equals(3))
+    expect_that(is.factor(CP_ranking[, 1]), is_true())
+    expect_that(is.numeric(CP_ranking[, 2]), is_true())
+    expect_that(is.integer(CP_ranking[, 3]), is_true())
+    expect_that(is.unsorted(CP_ranking[, 2]), is_false())
+    expect_that(is.unsorted(CP_ranking[, 3]), is_false())
+})
+
+test_that("CombP stops if wrong input", {
+    input_file_P <- system.file("extdata","CombP_toydata.txt",package="GenRank")
+    input_dat <- read.table(input_file_P,header=F, sep='\t',stringsAsFactors = FALSE)
+    expect_that(ncol(input_dat)>2, is_true())
+    expect_that(is.character(input_dat[, 1]), is_true())
+    expect_that(is.numeric(input_dat[, 3]), is_true())
+    expect_error(CombP(input_file_P), "need.*")
+    expect_error(CombP(input_file_P, "fisher"), "need.*")
+    expect_error(CombP(input_file_P, method = "fisher"), "NAs.*")
+    expect_error(CombP(input_file_P, method = "Fisher"), "method.*")
+}) 
