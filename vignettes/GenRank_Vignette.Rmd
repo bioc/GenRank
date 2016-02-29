@@ -3,15 +3,14 @@ title: "Introduction to GenRank Package"
 author: "Chakravarthi Kanduri, chakra.kanduri@gmail.com"
 date: '`r Sys.Date()`'
 output:
-  html_document:
+  rmarkdown::html_document:
     css: custom.css
     theme: journal
     toc: yes
-  pdf_document:
-    number_sections: yes
-    toc: yes
-vignette: "%\\VignetteIndexEntry{Vignette Title}\n%\\VignetteEngine{knitr::rmarkdown}
-  \n%\\VignetteEncoding{UTF-8}\n"
+vignette: >
+    %\VignetteIndexEntry{Introduction to GenRank Package}
+    %\VignetteEngine{knitr::rmarkdown}
+    %\VignetteEncoding{UTF-8}
 ---
 ***
 # Introduction
