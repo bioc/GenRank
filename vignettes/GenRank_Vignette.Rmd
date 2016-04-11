@@ -74,10 +74,22 @@ CE_ranks <- ComputeCE(input_file,PC = "equal")
 head(CE_ranks)
 ```
 
-However, when the `PC = "custom"`, the user needs to supply another argument `cust.weights`, which is a numeric vector containing numbers that refelect the credibility associated with each evidence layer. The custom weights allow the user to give more weight (or less weight) to a particular evidence layer. These custom weights could be based on the reproducibility of the findings of a study, sample size, reliability of a technology and so on. 
+However, when the `PC = "custom"`, the user needs to supply another argument `cust.weights`, which is a numeric vector containing numbers that refelect the credibility associated with each evidence layer.
 
 ```{r}
 evid.weight <- c(1,1,0.8,0.8,0.5,1)
+```
+
+***Note:*** Here it is very important to note that the order of custom weights in `cust.weights` vector should correspond to the respective evidence layers. The easiest way to ensure this is by inspecting the order of evidence layer names supplied in the second column of input file and making a corresponding `cust.weights` vector. This can be done using following commands:
+
+```{r}
+file1 <- read.table(input_file, header = FALSE, sep = "\t", stringsAsFactors = FALSE)
+names(table(file1[,2]))
+```
+
+The custom weights allow the user to give more weight (or less weight) to a particular evidence layer. These custom weights could be based on the reproducibility of the findings of a study, sample size, reliability of a technology and so on. 
+
+```{r}
 CE_ranks_cust <- ComputeCE(input_file,PC = "custom", cust.weights = evid.weight)
 head(CE_ranks_cust)
 ```
