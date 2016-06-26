@@ -15,20 +15,22 @@ vignette: >
 ***
 # Introduction
 ***
-Genomics studies employ multiple independent lines of investigation to address a phenotype or complex genetic trait. This includes studying various forms of genomic variation (SNPs, CNVs, InDels) and gene expression (in multiple tissues) in a single phenotype. In addition, such  studies might be carried out in a single or multiple species of interest (e.g, humans and other relevant model organisms). One of the common characteristics of such modern high-throughput experiments across -omics fields is that they produce long lists of genes. Integration of data at gene-level from multiple evidence layers has been shown to be an effective approach to identify and prioritize candidate genes in complex genetic traits. Here, we have implemented three methods to integrate gene-level data generated from multiple independent lines of investigation:
+Genomics studies employ multiple independent lines of investigation to address a phenotype or complex genetic trait. This includes studying various forms of genomic variation (SNPs, CNVs, InDels) and gene expression (in multiple tissues) in a single phenotype. In addition, such  studies might be carried out in a single or multiple species of interest (e.g, humans and other relevant model organisms). One of the common characteristics of such modern high-throughput experiments across -omics fields is that they produce long lists of genes. Integration of data at gene-level from multiple evidence layers has been shown to be an effective approach to identify and prioritize candidate genes in complex genetic traits. Here, we have implemented three methods to integrate gene-level data generated from multiple independent lines of investigation (Figure 1):
 
-- Convergent Evidence (CE) method, which is a variant of the famous   PageRank algorithm
+- Convergent Evidence (CE) method, which aggregates evidence based on a weighted vote counting method and ranks genes
 - Rank Product (RP) method, which was earlier proposed to perform differential expression and meta-analysis of microarray-based gene expression data, and
 - The traditional methods to combine p-values.
+
+![Figure 1: Overarching goal of the package](Figure1.png)
 
 ***
 # Background
 ***
 ## Evidence layers
 
-We mentioned about the integration of gene-level data from multiple evidence layers above. Here, we briefly explain what is referred to as an 'evidence layer' throughout this package. An evidence layer could be one of the multiple independent lines of investigation. Those independent lines of investigation may use same method (e.g GWAS) to study the phenotype in independent sample groups (e.g GWAS studies carried out by different labs to study the same phenotype). Alternatively, the independent lines of investigation may use different methods (e.g SNP, CNV, RNA, miRNA) to study the phenotype in same or independent sample groups. Instead, the independent lines of investigation may employ multiple methods to study the same phenotype in different tissues or altogether in different species.  However, the definition of phenotype and phenotypic homogeneity (less variability in phenotypic characterization) is very crucial in this kind of integrative studies. Examples of evidence layers are shown below.
+We mentioned about the integration of gene-level data from multiple evidence layers above. Here, we briefly explain what is referred to as an 'evidence layer' throughout this package. An evidence layer could be one of the multiple independent lines of investigation. Those independent lines of investigation may use a same method (e.g GWAS) to study the phenotype in independent sample groups (e.g GWAS studies carried out by different labs to study the same phenotype). Alternatively, the independent lines of investigation may use different methods (e.g SNP, CNV, RNA, miRNA) to study the phenotype in same or independent sample groups. Instead, the independent lines of investigation may employ multiple methods to study the same phenotype in different tissues or altogether in different species.  However, the definition of phenotype and phenotypic homogeneity (less variability in phenotypic characterization) is very crucial in this kind of integrative studies. Examples of evidence layers are shown below in Figure 2.
 
-![Evidence layers](Figure.png)
+![Figure 2: Evidence layers](Figure.png)
 
 ## Handling of duplicate genes
 
@@ -40,7 +42,7 @@ The required input file format is quite straightforward. A tab-delimited text fi
 
 ```{r, echo=FALSE}
 library(GenRank)
-input_file <- system.file("extdata","CE_RP_toydata.txt",package="GenRank")
+input_file <- system.file("extdata","CE_toydata.txt",package="GenRank")
 toydata <- read.table(input_file,header=FALSE, sep = '\t')
 head(toydata)
 ```
@@ -50,9 +52,14 @@ However, for the Convergent Evidence scores (CE) method, the first two columns d
 ***
 # Convergent Evidence (CE) method
 ***
-Convergent Evidence (CE) method is a variant of the famous PageRank algorithm. According to the original PageRank algorithm, when page A has $n$ incoming links from pages $T_1....T_n$, the rank of a page A is given by $$PR(A)=PR(T_1)/C(T_1)+....PR(T_n)/C(T_n)$$ Here $PR(T_i)$ refers to the self-importance of link $T_i$, while $C(T_i)$ refers to the number of outgoing links from page $T_i$. A variant of this PageRank algorithm has earlier been adapted to rank genes in microarray-based gene expression experiments (Morrison, BMC Bioinformatics, 2005). A conceptually similar gene-level integration has been succesfully used to prioritize candidate genes in neuropsychiatric diseases. 
+Convergent Evidence (CE) method aggregates ranks of genes based on a weighted vote counting method. A conceptually similar gene-level integration has been succesfully used to prioritize candidate genes in neuropsychiatric diseases (e.g., Ayalew M, 2012, Mol Psychiatry). 
 
-Here, we have modified the PageRank algorithm to rank genes based on gene-level integration of data from multiple evidence layers. For this, we compute convergent evidence scores, $$CE(G)=CE(L_1)/n(L_1)+....CE(L_n)/n(L_n)$$ Here $CE(L_i)$ refers to the self-importance of evidence layer-i, while $n(L_i)$ refers to the number of genes within evidence layer-i. However, in several instances determining the importance of an evidence layer by the number of genes within that evidence layer may not be biologically meaningful. To accommodate in this issue, we propose two other ways to compute convergent evidence scores. One of them is to ignore the numer of genes within each layer, thus $$CE(G)=CE(L_1)+....CE(L_n)$$ In this case, the convergent evidence score would be equivalent to the primitive vote counting. Another alternative method enables the researchers to determine the importnace of each layer based on their own intuition. This involves assigning custom weights to each evidence layer based on their expert knowledge in the field. For example, when a researcher knows that a specific technology-based findings could yield less reproducible findings, such evidence layer could be given a relatively less weight compared to the other evidence layers. Another objective way of assigning custom weights to each evidence layer could be based on the sample sizes of each evidence layer. In this case convergent evidence score $$CE(G)=CE(L_1)*w(L_1)+....CE(L_n)*w(L_n)$$ where $w(L_i)$ refers to the custom weight assigned to evidence layer-i.
+Here, to rank genes, we compute convergent evidence scores. The convergent evidence score of gene $G$ is given by $$CE(G)=CE(G_{L_1})/n(L_1)+....CE(G_{L_n})/n(L_n)$$ Here $CE(G_{L_i})$ refers to the self-importance of evidence layer-i, while $n(L_i)$ refers to the number of genes within evidence layer-i. However, in several instances determining the importance of an evidence layer by the number of genes within that evidence layer may not be biologically meaningful. To accommodate this issue, we propose two other ways to compute convergent evidence scores. One of them is to ignore the numer of genes within each layer, thus $$CE(G)=CE(G_{L_1})+....CE(G_{L_n})$$ In this case, the convergent evidence score would be equivalent to the primitive vote counting. Another alternative method enables the researchers to determine the importnace of each layer based on their own intuition. This involves assigning custom weights to each evidence layer based on their expert knowledge in the field. For example, when a researcher knows that a specific technology-based findings could yield less reproducible findings, such evidence layer could be given a relatively less weight compared to the other evidence layers. Another objective way of assigning custom weights to each evidence layer could be based on the sample sizes of each evidence layer. In this case convergent evidence score $$CE(G)=CE(G_{L_1})*w(L_1)+....CE(G_{L_n})*w(L_n)$$ where $w(L_i)$ refers to the custom weight assigned to evidence layer-i.
+
+![Figure 3: An example of computing CE scores](CE_scoring.png)
+
+Figure 3 shows an illustration of computing CE scores.
+This illustration shows six evidence layers (Layer.1-Layer.6). The color iris-blue represents the detection of a gene, while the salmon color indicates the absence of evidence within an evidence layer. Let us assume that evidence layers were assigned custom weights (as discussed above) of 1.0,1.0,0.9,0.8,0.6 and 0.5 respectively for layers 1-6. Here, genes A, B and D are detected twice each. However, based on a weighted vote counting method, the convergent evidence scores of genes A, B and D would be 1.9, 1.7 and 2.0 respectively, thus D getting a better rank.   
 
 ## CE method tutorial
 
@@ -60,7 +67,7 @@ We use the `ComputeCE` function in this package to compute convergent evidence s
 
 ```{r, echo=FALSE}
 library(GenRank)
-input_file <- system.file("extdata","CE_RP_toydata.txt",package="GenRank")
+input_file <- system.file("extdata","CE_toydata.txt",package="GenRank")
 toydata <- read.table(input_file,header=FALSE, sep = '\t')
 head(toydata[,1:2])
 ```
@@ -69,7 +76,7 @@ Along with the input file, this function requires another argument `PC`, which i
 
 ```{r}
 library(GenRank)
-input_file <- system.file("extdata","CE_RP_toydata.txt",package="GenRank")
+input_file <- system.file("extdata","CE_toydata.txt",package="GenRank")
 CE_ranks <- ComputeCE(input_file,PC = "equal")
 head(CE_ranks)
 ```
@@ -96,17 +103,17 @@ head(CE_ranks_cust)
 ***
 # Rank Product (RP) method
 ***
-Rank Product (RP) method has earlier been used widely to perform differential expression and meta-analysis in microarray-based gene expression datasets. This biologically motivated method is quite simple (based on geometric mean) yet powerful to rank genes that are consistently ranked high in replicated experiments (Breitling, FEBS Letters, 2004). We adapted the rank product method to identify genes that are consistently highly ranked across evidence layers. In the original rank product method proposed for gene expression datasets, the gene-list or the number of genes ($1....n$) would be the same across replicates or replicated experiments. However, this might not be the case in the majority of instances when integrating gene-level data from multiple evidence layers. For addressing this issue, if there are a total of $n$ unique genes across evidence layers, we have added missing genes to each individual evidence layer and gave them a rank of $n+1$, so that each gene has a rank within each evidence layer. Thereafter, the rank product is computed and compared to a permutation-based distribution of rank product values to estimate the proportion of false predictions (pfp) (equivalent to FDR).
+Rank Product (RP) method has earlier been used widely to perform differential expression and meta-analysis in microarray-based gene expression datasets. This biologically motivated method is quite simple (based on geometric mean) yet powerful to rank genes that are consistently ranked high in replicated experiments (Breitling, FEBS Letters, 2004). We adapted the rank product method to identify genes that are consistently highly ranked across evidence layers. In this method,the gene-list or the number of genes ($1....n$) should be the same across all evidence layers. The rank product is computed and compared to a permutation-based distribution of rank product values to estimate the proportion of false predictions (pfp) (equivalent to FDR).
 
 ## RP method tutorial
 
-We use the `ComputeRP` function in this package to obtain convergent evidence based on the famous rank product method. This function requires an input `file`, for which the file format has been mentioned above (min 3 columns). 
+We use the `ComputeRP` function in this package to obtain convergent evidence based on the famous rank product method. This function requires an input `file`, for which the file format has been mentioned above (min 3 columns). As mentioned above, this method requires that the gene list should be the same across all evidence layers. In other words, this method can be used when evidence is available across all evidence layers, but with varying levels of significance. 
 
 Along with the input file, this function requires another argument `signif.type`, which is a character vector that indicates whether the evidence layer is comprised of significance statistic with low numeric values (e.g p-values) or high numeric values (e.g effect-size). This knowledge is required for sorting the genes based on the significance statistic. It takes either of the two values `"L"` (for low numeric values), or `"H"` (for high numeric values). For example, the usage of this function looks like this:
 
 ```{r}
 library(GenRank)
-input_file <- system.file("extdata","CE_RP_toydata.txt",package="GenRank")
+input_file <- system.file("extdata","RP_toydata.txt",package="GenRank")
 signif.val <- c('L','L','H','L','H','L')
 RP_ranks <- ComputeRP(input_file, signif.type = signif.val)
 head(RP_ranks)
@@ -128,7 +135,7 @@ For more information about setseed, see the default set.seed function in base R 
 ***
 Combining p-values has been one of the traditional methods of meta-analysis. To combine p-values of a gene from multiple evidence layers, the p-values should have been estimated from the same null nypothesis. Popular methods to combine p-values include Fisher's and Stouffer's methods, where the latter incorporates custom weights (e.g. sample sizes). These popular methods have already been implemented in the bioconductor package survcomp. Here, we built a wrapper around those methods to suit the overarching theme of this package (integrating gene-level data from multiple evidence layers). For more details about the implementation of these methods, see combine.test function in survcomp package. 
 
-One of the biases that could probably creep in when combining p-values is because of the missing p-values in some evidence layers. Let us assume a case where we are combining p-values of genes from six different evidence layers. For example, the p-values of genes ABC and XYZ across six evidence layers are like this: ABC (0.001, NA, NA, NA, 0.03, NA)  and XYZ (0.04, 0.03, 0.001, 0.05, 0.04, 0.05). Although gene ABC is detected only in two evidence layers, its combined p-value may not be too different when compared to the combined p-value of gene XYZ. To handle this issue, the CombP function in this package returns the combined p-values of only those genes, for which p-values are available at lest across 60% of the evidence layers. However, it would be an ideal scenario to have p-values available across all evidence layers. 
+One of the biases that could probably creep in when combining p-values is because of the missing p-values in some evidence layers. Let us assume a case where we are combining p-values of genes from six different evidence layers. For example, the p-values of genes ABC and XYZ across six evidence layers are like this: ABC (0.001, NA, NA, NA, 0.03, NA)  and XYZ (0.04, 0.03, 0.001, 0.05, 0.04, 0.05). Although gene ABC is detected only in two evidence layers, its combined p-value may not be too different when compared to the combined p-value of gene XYZ. To handle this issue, the CombP function in this package returns the combined p-values of only those genes, for which p-values are available at lest across half of the evidence layers. However, it would be an ideal scenario to have p-values available across all evidence layers. 
 
 ## Combining p-values tutorial
 

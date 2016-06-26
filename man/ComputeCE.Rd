@@ -25,7 +25,7 @@ If all the inputs are in the correct format as suggested, then the output will
 \code{ComputeCE} returns ranks of the genes based on CE scores.
 }
 \examples{
-input_file <- system.file("extdata","CE_RP_toydata.txt",package="GenRank")
+input_file <- system.file("extdata","CE_toydata.txt",package="GenRank")
 CE_ranks <- ComputeCE(input_file,PC = "equal")
 evid.weight <- c(1,1,0.8,0.8,0.5,1)
 CE_ranks_cust <- ComputeCE(input_file,PC = "custom", cust.weights = evid.weight)

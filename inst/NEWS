@@ -1,3 +1,7 @@
+Version 1.0.3
+
+Made slight modifications to the vignette and added a couple of figures. Changed the way RankProduct method handles the missing evidence across evidence layers.
+
 Version 0.99.0
 
 Initial package submitted.

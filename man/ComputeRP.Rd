@@ -32,7 +32,7 @@ If all the inputs are in the correct format as suggested, then the output will
 \code{ComputeRP} returns ranks of the genes based on rank product method.
 }
 \examples{
-input_file <- system.file("extdata","CE_RP_toydata.txt",package="GenRank")
+input_file <- system.file("extdata","RP_toydata.txt",package="GenRank")
 signif.val <- c('L','L','H','L','H','L')
 RP_ranks <- ComputeRP(input_file, signif.type = signif.val)
 RP_ranks_cust <- ComputeRP(input_file, signif.type = signif.val, n.perm=200, setseed=1234)
