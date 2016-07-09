@@ -1,6 +1,6 @@
 Package: GenRank
 Title: Candidate gene prioritization based on convergent evidence
-Version: 1.0.3
+Version: 0.99.4
 Authors@R: person("Chakravarthi", "Kanduri", email =
         "chakra.kanduri@gmail.com", role = c("aut", "cre"))
 Author: Chakravarthi Kanduri
